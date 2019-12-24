@@ -18,20 +18,24 @@ jobs:
     #  uses: docker://gittools/gitversion:5.0.2-linux
      # with:
       #  args: '-updateassemblyinfo -nocache -output buildserver'
-    - name: Add gitversion
-      run: dotnet tool install -g GitVersion.Tool
     - name: Run gitversion with dotnet
       if: success()
-      run: dotnet-gitversion /l console /output buildserver /updateAssemblyInfo
+      run: |
+        dotnet tool install -g GitVersion.Tool
+        dotnet-gitversion /l console /output buildserver /updateAssemblyInfo
+        
     - name: Build with dotnet
       if: success()
       run: dotnet build -c Release
+      
     - name: Test with dotnet
       if: success()
       run: dotnet test -c Release --no-build
+      
     - name: Package with dotnet
       if: success()
       run: dotnet pack -c Release --no-build --include-source --include-symbols
+      
     - name: Push to MyGet with dotnet
       if: success()
-      run: dotnet nuget push -s https://www.myget.org/F/tomsoliver/auth/67194d00-4c6f-402b-af6b-55a739d55c89/api/v3/index.json
+      run: dotnet nuget push *.nupkg -s https://www.myget.org/F/tomsoliver/auth/67194d00-4c6f-402b-af6b-55a739d55c89/api/v3/index.json
