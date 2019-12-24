@@ -22,7 +22,7 @@ jobs:
       run: dotnet tool install -g GitVersion.Tool
     - name: Run gitversion with dotnet
       if: success()
-      run: gitversion /l console /output buildserver /updateAssemblyInfo
+      run: dotnet-gitversion /l console /output buildserver /updateAssemblyInfo
     - name: Build with dotnet
       if: success()
       run: dotnet build -c Release
