@@ -1,0 +1,32 @@
+name: Build, Pack, and Publish Pre-Release
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+    - name: Update AssemblyInfo files
+      uses: docker://gittools/gitversion:5.0.2-linux
+      with:
+        args: '-updateassemblyinfo -nocache -output buildserver'
+    - name: Build with dotnet
+      if: success()
+      run: dotnet build -c Release
+    - name: Test with dotnet
+      if: success()
+      run: dotnet test -c Release --no-build
+    - name: Package with dotnet
+      if: success()
+      run: dotnet pack -c Release --no-build --include-source --include-symbols
+    - name: Push to MyGet with dotnet
+      if: success()
+      run: dotnet nuget push -s https://www.myget.org/F/tomsoliver/auth/67194d00-4c6f-402b-af6b-55a739d55c89/api/v3/index.json
