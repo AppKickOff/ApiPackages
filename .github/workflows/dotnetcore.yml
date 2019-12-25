@@ -14,7 +14,12 @@ jobs:
     - uses: actions/checkout@v2
         
     - name: Install gitversion
-      run: dotnet tool install -g GitVersion.Tool
+      run: | 
+        dotnet tool install -g GitVersion.Tool
+        cat << \EOF >> ~/.bash_profile
+        # Add .NET Core SDK tools
+        export PATH="$PATH:/github/home/.dotnet/tools"
+        EOF
       
     - name: Run gitversion with dotnet
       if: success()
