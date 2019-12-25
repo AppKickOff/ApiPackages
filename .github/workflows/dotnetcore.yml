@@ -18,11 +18,13 @@ jobs:
     #  uses: docker://gittools/gitversion:5.0.2-linux
      # with:
       #  args: '-updateassemblyinfo -nocache -output buildserver'
+        
+    - name: Install gitversion
+      run: dotnet tool install -g GitVersion.Tool
+      
     - name: Run gitversion with dotnet
       if: success()
-      run: |
-        dotnet tool install -g GitVersion.Tool
-        dotnet-gitversion /l console /output buildserver /updateAssemblyInfo
+      run: dotnet-gitversion /l console /output buildserver /updateAssemblyInfo
         
     - name: Build with dotnet
       if: success()
